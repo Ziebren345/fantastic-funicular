@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}COUNCIL KELERES - Intel Library{% endblock %}
+{% block content %}
+<div class="page">
+    <div class="page-header">
+        <h1>INTELLIGENCE LIBRARY</h1>
+        {% if user.profile.is_gm %}
+        <a href="{% url 'admin:intel_article_add' %}" class="btn btn-primary">+ NEW REPORT</a>
+        {% endif %}
+    </div>
+
+    <div class="filter-bar">
+        <form method="get" class="filter-form">
+            <label>Filter by category:</label>
+            <select name="category" onchange="this.form.submit()" class="form-control filter-select">
+                <option value="">All Categories</option>
+                {% for key, label in categories %}
+                <option value="{{ key }}" {% if current_category == key %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </form>
+    </div>
+
+    <div class="card-grid">
+        {% for article in articles %}
+        <a href="{% url 'article_detail' article.pk %}" class="card-link">
+            <div class="article-card">
+                <div class="article-card-header">
+                    <span class="article-category cat-{{ article.category }}">{{ article.get_category_display }}</span>
+                    <span class="classification classification-{{ article.classification }}">{{ article.get_classification_display }}</span>
+                </div>
+                <h3>{{ article.title }}</h3>
+                {% if article.summary %}
+                <p>{{ article.summary|truncatewords:30 }}</p>
+                {% endif %}
+                <div class="article-meta">
+                    <span>{{ article.created_at|date:"Y-m-d" }}</span>
+                    <span>by {{ article.author.get_full_name|default:article.author.username|default:"Unknown" }}</span>
+                </div>
+            </div>
+        </a>
+        {% empty %}
+        <p class="empty">No intelligence reports found.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}COUNCIL KELERES - Planetary Database{% endblock %}
+{% block content %}
+<div class="page">
+    <div class="page-header">
+        <h1>PLANETARY DATABASE</h1>
+        <span class="classification-banner public">PUBLIC</span>
+    </div>
+
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Sector</th>
+                    <th>Climate</th>
+                    <th>Resources</th>
+                    <th>Controlled By</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for planet in planets %}
+                <tr>
+                    <td><strong>{{ planet.name }}</strong></td>
+                    <td>{{ planet.sector|default:"—" }}</td>
+                    <td>{{ planet.get_climate_display }}</td>
+                    <td>{{ planet.get_resources_display }}</td>
+                    <td>{{ planet.controlling_faction|default:"Unclaimed" }}</td>
+                    <td><a href="{% url 'planet_detail' planet.pk %}" class="btn btn-small">VIEW</a></td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="empty">No planets in database.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

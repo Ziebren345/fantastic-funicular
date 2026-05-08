@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% block title %}COUNCIL KELERES - Dashboard{% endblock %}
+{% block content %}
+<div class="dashboard">
+    <div class="page-header">
+        <h1>COMMAND DASHBOARD</h1>
+        <div class="header-actions">
+            <span class="classification-banner restricted">CLASSIFIED</span>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">⚔</div>
+            <div class="stat-content">
+                <span class="stat-value">{{ active_missions }}</span>
+                <span class="stat-label">Active Missions</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">📦</div>
+            <div class="stat-content">
+                <span class="stat-value">{{ pending_gear }}</span>
+                <span class="stat-label">Pending Gear Requests</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">👤</div>
+            <div class="stat-content">
+                <span class="stat-value">{{ my_missions }}</span>
+                <span class="stat-label">My Active Missions</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">🌍</div>
+            <div class="stat-content">
+                <span class="stat-value">{{ relations|length }}</span>
+                <span class="stat-label">Known Factions</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="dash-panel relations-panel">
+            <div class="panel-header">
+                <h2>FACTION RELATIONS</h2>
+                <a href="{% url 'faction_list' %}" class="panel-link">VIEW ALL →</a>
+            </div>
+            <div class="panel-body">
+                {% for rel in relations %}
+                <div class="relation-row">
+                    <span class="relation-name">{{ rel.faction.name }}</span>
+                    <span class="relation-level level-{{ rel.level }}">{{ rel.get_level_display }}</span>
+                    {% if rel.trend %}
+                    <span class="relation-trend">{{ rel.trend }}</span>
+                    {% endif %}
+                </div>
+                {% empty %}
+                <div class="empty-state">No faction data recorded.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="dash-panel news-panel">
+            <div class="panel-header">
+                <h2>LATEST INTELLIGENCE</h2>
+                <a href="{% url 'article_list' %}" class="panel-link">VIEW ALL →</a>
+            </div>
+            <div class="panel-body">
+                {% for article in recent_articles %}
+                <div class="news-item">
+                    <span class="news-category cat-{{ article.category }}">{{ article.get_category_display }}</span>
+                    <a href="{% url 'article_detail' article.pk %}" class="news-title">{{ article.title }}</a>
+                </div>
+                {% empty %}
+                <div class="empty-state">No intel reports available.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="dash-panel news-panel">
+            <div class="panel-header">
+                <h2>GALACTIC NEWS</h2>
+                <a href="{% url 'news_list' %}" class="panel-link">VIEW ALL →</a>
+            </div>
+            <div class="panel-body">
+                {% for item in recent_news %}
+                <div class="news-item">
+                    <span class="news-importance imp-{{ item.importance }}">{{ item.get_importance_display }}</span>
+                    <a href="{% url 'news_detail' item.pk %}" class="news-title">{{ item.headline }}</a>
+                </div>
+                {% empty %}
+                <div class="empty-state">No news published.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        {% if is_gm %}
+        <div class="dash-panel gm-panel">
+            <div class="panel-header">
+                <h2>TRIBUNII QUICK ACTIONS</h2>
+            </div>
+            <div class="panel-body gm-actions">
+                <a href="{% url 'admin:missions_mission_add' %}" class="gm-btn">Create New Mission</a>
+                <a href="{% url 'admin:intel_article_add' %}" class="gm-btn">Write Intel Report</a>
+                <a href="{% url 'admin:newsfeed_newsarticle_add' %}" class="gm-btn">Publish News</a>
+                <a href="{% url 'admin:personnel_personnelfile_add' %}" class="gm-btn">New Personnel File</a>
+                <a href="{% url 'admin:diplomacy_faction_add' %}" class="gm-btn">Add Faction</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

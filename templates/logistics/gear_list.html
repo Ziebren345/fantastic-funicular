@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}COUNCIL KELERES - Logistics{% endblock %}
+{% block content %}
+<div class="page">
+    <div class="page-header">
+        <h1>LOGISTICS & GEAR REQUESTS</h1>
+        <a href="{% url 'gear_request_create' %}" class="btn btn-primary">+ NEW REQUEST</a>
+    </div>
+
+    {% if user.profile.is_gm %}
+    <div class="info-banner">
+        <span>You are viewing ALL requests. Approve/deny via the <a href="{% url 'admin:logistics_gearrequest_changelist' %}">Admin Panel</a>.</span>
+    </div>
+    {% endif %}
+
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Agent</th>
+                    <th>Item</th>
+                    <th>Qty</th>
+                    <th>Urgency</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for req in requests %}
+                <tr>
+                    <td>{{ req.requester.name }}</td>
+                    <td>{{ req.item_name }}</td>
+                    <td>{{ req.quantity }}</td>
+                    <td><span class="urgency urgency-{{ req.urgency }}">{{ req.get_urgency_display }}</span></td>
+                    <td><span class="status-badge status-{{ req.status }}">{{ req.get_status_display }}</span></td>
+                    <td>{{ req.created_at|date:"Y-m-d" }}</td>
+                    <td><a href="{% url 'gear_request_detail' req.pk %}" class="btn btn-small">VIEW</a></td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="7" class="empty">No gear requests.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

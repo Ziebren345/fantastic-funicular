@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}{{ mission.codename|default:mission.title }} - Mission{% endblock %}
+{% block content %}
+<div class="page">
+    <div class="page-header">
+        <h1>MISSION: {{ mission.codename|upper|default:mission.title|upper }}</h1>
+        <div class="header-actions">
+            <span class="status-badge status-{{ mission.status }}">{{ mission.get_status_display }}</span>
+            <span class="classification classification-{{ mission.classification }}">{{ mission.get_classification_display }}</span>
+        </div>
+    </div>
+
+    <div class="detail-card">
+        <div class="info-grid">
+            <div class="info-row"><span class="info-label">Title</span><span class="info-value">{{ mission.title }}</span></div>
+            <div class="info-row"><span class="info-label">Codename</span><span class="info-value">{{ mission.codename|default:"None" }}</span></div>
+            <div class="info-row"><span class="info-label">Location</span><span class="info-value">{{ mission.location|default:"Unknown" }}</span></div>
+            <div class="info-row"><span class="info-label">Threat Level</span><span class="info-value">{{ mission.threat_level|default:"Unassessed" }}</span></div>
+            <div class="info-row"><span class="info-label">Author</span><span class="info-value">{{ mission.author.get_full_name|default:mission.author.username }}</span></div>
+            <div class="info-row"><span class="info-label">Deadline</span><span class="info-value">{{ mission.deadline|date:"Y-m-d H:i"|default:"None" }}</span></div>
+        </div>
+    </div>
+
+    <div class="detail-grid">
+        <div class="detail-card">
+            <h2>BRIEFING</h2>
+            <div class="content-block">{{ mission.briefing|linebreaks }}</div>
+        </div>
+        <div class="detail-card">
+            <h2>OBJECTIVES</h2>
+            {% for obj in mission.objectives.all %}
+            <div class="objective-item {% if obj.is_complete %}complete{% endif %}">
+                <span class="obj-order">{{ obj.order }}.</span>
+                <span class="obj-text">{{ obj.description }}</span>
+                <span class="obj-meta">
+                    {% if obj.is_primary %}<span class="primary-tag">PRIMARY</span>{% endif %}
+                    {% if obj.is_complete %}<span class="complete-tag">✓ COMPLETE</span>{% endif %}
+                </span>
+            </div>
+            {% empty %}
+            <p class="empty">No objectives defined.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    {% if mission.assigned_personnel.exists %}
+    <div class="detail-card">
+        <h2>ASSIGNED PERSONNEL</h2>
+        <ul class="roster-list">
+            {% for agent in mission.assigned_personnel.all %}
+            <li><a href="{% url 'personnel_detail' agent.pk %}">{{ agent.name }} "{{ agent.callsign }}"</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    {% if mission.debrief %}
+    <div class="detail-card">
+        <h2>DEBRIEF / AFTER-ACTION REPORT</h2>
+        <div class="content-block">{{ mission.debrief|linebreaks }}</div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

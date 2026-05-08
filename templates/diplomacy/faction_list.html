@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}COUNCIL KELERES - Faction Directory{% endblock %}
+{% block content %}
+<div class="page">
+    <div class="page-header">
+        <h1>FACTION DIRECTORY</h1>
+        <span class="classification-banner restricted">RESTRICTED</span>
+    </div>
+
+    <div class="card-grid">
+        {% for faction in factions %}
+        <a href="{% url 'faction_detail' faction.pk %}" class="card-link">
+            <div class="faction-card">
+                <h3>{{ faction.name }}</h3>
+                <div class="faction-meta">
+                    <span>{{ faction.get_government_display }}</span>
+                    <span>Tech: {{ faction.get_technology_display }}</span>
+                </div>
+                {% if faction.relation %}
+                <span class="relation-level level-{{ faction.relation.level }}">{{ faction.relation.get_level_display }}</span>
+                {% endif %}
+                <p class="faction-summary">{{ faction.description|truncatewords:30 }}</p>
+            </div>
+        </a>
+        {% empty %}
+        <p class="empty">No factions in database.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

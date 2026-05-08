@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}{{ faction.name }} - Faction Profile{% endblock %}
+{% block content %}
+<div class="page">
+    <div class="page-header">
+        <h1>FACTION: {{ faction.name|upper }}</h1>
+        <div class="header-actions">
+            {% if relation %}<span class="relation-level level-{{ relation.level }}">{{ relation.get_level_display }}</span>{% endif %}
+            <span class="classification-banner restricted">RESTRICTED</span>
+        </div>
+    </div>
+
+    <div class="detail-grid">
+        <div class="detail-card">
+            <h2>PROFILE</h2>
+            <div class="info-grid">
+                <div class="info-row"><span class="info-label">Homeworld</span><span class="info-value">{{ faction.homeworld|default:"Unknown" }}</span></div>
+                <div class="info-row"><span class="info-label">Government</span><span class="info-value">{{ faction.get_government_display }}</span></div>
+                <div class="info-row"><span class="info-label">Technology</span><span class="info-value">{{ faction.get_technology_display }}</span></div>
+                <div class="info-row"><span class="info-label">Allies</span><span class="info-value">{{ faction.known_allies|default:"None known" }}</span></div>
+                <div class="info-row"><span class="info-label">Enemies</span><span class="info-value">{{ faction.known_enemies|default:"None known" }}</span></div>
+            </div>
+            <div class="info-section">
+                <h3>Description</h3>
+                <p>{{ faction.description|linebreaks }}</p>
+            </div>
+            {% if faction.culture_notes %}
+            <div class="info-section">
+                <h3>Culture & Customs</h3>
+                <p>{{ faction.culture_notes|linebreaks }}</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="detail-card">
+            <h2>KELERES RELATIONS</h2>
+            {% if relation %}
+            <div class="relation-display">
+                <span class="relation-large level-{{ relation.level }}">{{ relation.get_level_display }}</span>
+                <p class="relation-trend">Trend: {{ relation.trend|default:"Stable" }}</p>
+                <div class="relation-flags">
+                    <span>Trade: {% if relation.trade_active %}✓ Active{% else %}✗ Inactive{% endif %}</span>
+                    <span>Military Treaty: {% if relation.military_treaty %}✓ Yes{% else %}✗ No{% endif %}</span>
+                </div>
+                <div class="info-section">
+                    <h3>Notes</h3>
+                    <p>{{ relation.notes|linebreaks|default:"No notes." }}</p>
+                </div>
+            </div>
+
+            {% if relation.logs.exists %}
+            <div class="info-section">
+                <h3>Interaction Log</h3>
+                <div class="log-list">
+                    {% for log in relation.logs.all %}
+                    <div class="log-entry">
+                        <span class="log-date">{{ log.timestamp|date:"Y-m-d H:i" }}</span>
+                        <p>{{ log.entry }}</p>
+                        {% if log.effect %}<span class="log-effect">{{ log.effect }}</span>{% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% else %}
+            <p class="empty">No relation data recorded.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if planets %}
+    <div class="detail-card">
+        <h2>CONTROLLED PLANETS</h2>
+        <div class="planet-grid">
+            {% for planet in planets %}
+            <a href="{% url 'planet_detail' planet.pk %}" class="planet-card">
+                <span class="planet-name">{{ planet.name }}</span>
+                <span class="planet-climate">{{ planet.get_climate_display }}</span>
+                <span class="planet-resources">{{ planet.get_resources_display }}</span>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

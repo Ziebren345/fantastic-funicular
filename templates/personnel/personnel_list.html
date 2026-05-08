@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}COUNCIL KELERES - Personnel Roster{% endblock %}
+{% block content %}
+<div class="page">
+    <div class="page-header">
+        <h1>PERSONNEL ROSTER</h1>
+        <a href="{% url 'my_personnel' %}" class="btn btn-secondary">MY FILE</a>
+    </div>
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Callsign</th>
+                    <th>Species</th>
+                    <th>Career</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for agent in personnel %}
+                <tr>
+                    <td>{{ agent.name }}</td>
+                    <td>{{ agent.callsign }}</td>
+                    <td>{{ agent.species|default:"—" }}</td>
+                    <td>{{ agent.career|default:"—" }}</td>
+                    <td><span class="status-badge status-{{ agent.status }}">{{ agent.get_status_display }}</span></td>
+                    <td><a href="{% url 'personnel_detail' agent.pk %}" class="btn btn-small">VIEW</a></td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="empty">No personnel files found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}{{ article.title }} - Intel Report{% endblock %}
+{% block content %}
+<div class="page">
+    <div class="page-header">
+        <h1>{{ article.title }}</h1>
+        <div class="header-actions">
+            <span class="article-category cat-{{ article.category }}">{{ article.get_category_display }}</span>
+            <span class="classification classification-{{ article.classification }}">{{ article.get_classification_display }}</span>
+        </div>
+    </div>
+
+    <div class="detail-card">
+        <div class="article-meta-bar">
+            <span>Published: {{ article.created_at|date:"Y-m-d H:i" }}</span>
+            <span>Last updated: {{ article.updated_at|date:"Y-m-d H:i" }}</span>
+            <span>Author: {{ article.author.get_full_name|default:article.author.username|default:"Unknown" }}</span>
+        </div>
+        <div class="content-block article-content">
+            {{ article.content|linebreaks }}
+        </div>
+    </div>
+
+    {% if article.related_factions.exists or article.related_planets.exists %}
+    <div class="detail-card">
+        <h2>RELATED ENTRIES</h2>
+        {% if article.related_factions.exists %}
+        <h3>Factions</h3>
+        <ul>
+            {% for f in article.related_factions.all %}
+            <li><a href="{% url 'faction_detail' f.pk %}">{{ f.name }}</a></li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% if article.related_planets.exists %}
+        <h3>Planets</h3>
+        <ul>
+            {% for p in article.related_planets.all %}
+            <li><a href="{% url 'planet_detail' p.pk %}">{{ p.name }}</a></li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

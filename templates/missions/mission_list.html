@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}COUNCIL KELERES - Missions{% endblock %}
+{% block content %}
+<div class="page">
+    <div class="page-header">
+        <h1>MISSIONS DATABASE</h1>
+        {% if user.profile.is_gm %}
+        <a href="{% url 'admin:missions_mission_add' %}" class="btn btn-primary">+ NEW MISSION</a>
+        {% endif %}
+    </div>
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Codename</th>
+                    <th>Title</th>
+                    <th>Classification</th>
+                    <th>Status</th>
+                    <th>Threat Level</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for mission in missions %}
+                <tr>
+                    <td><strong>{{ mission.codename|default:"—" }}</strong></td>
+                    <td>{{ mission.title }}</td>
+                    <td><span class="classification classification-{{ mission.classification }}">{{ mission.get_classification_display }}</span></td>
+                    <td><span class="status-badge status-{{ mission.status }}">{{ mission.get_status_display }}</span></td>
+                    <td>{{ mission.threat_level|default:"—" }}</td>
+                    <td><a href="{% url 'mission_detail' mission.pk %}" class="btn btn-small">VIEW</a></td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="empty">No missions in database.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

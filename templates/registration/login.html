@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}COUNCIL KELERES - Login{% endblock %}
+{% block content %}
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="auth-header">
+            <span class="auth-icon">◆</span>
+            <h1>COUNCIL KELERES</h1>
+            <p>Internal Command Terminal</p>
+        </div>
+        <form method="post" class="auth-form">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_username">AGENT IDENTIFICATION</label>
+                <input type="text" name="username" id="id_username" class="form-control" placeholder="Username" required>
+            </div>
+            <div class="form-group">
+                <label for="id_password">ACCESS CODE</label>
+                <input type="password" name="password" id="id_password" class="form-control" placeholder="Password" required>
+            </div>
+            <button type="submit" class="btn btn-primary">AUTHENTICATE</button>
+        </form>
+        <div class="auth-footer">
+            <span>New agent? <a href="{% url 'signup' %}">Register here</a></span>
+        </div>
+    </div>
+</div>
+{% endblock %}

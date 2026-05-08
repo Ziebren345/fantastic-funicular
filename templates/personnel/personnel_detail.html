@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% block title %}{{ agent.name }} - Personnel File{% endblock %}
+{% block content %}
+<div class="page">
+    <div class="page-header">
+        <h1>PERSONNEL FILE: {{ agent.name|upper }}</h1>
+        <div class="header-actions">
+            <span class="status-badge status-{{ agent.status }}">{{ agent.get_status_display }}</span>
+            <span class="classification-banner restricted">RESTRICTED</span>
+        </div>
+    </div>
+
+    <div class="detail-grid">
+        <div class="detail-card basic-info">
+            <h2>BASIC INFORMATION</h2>
+            <div class="info-grid">
+                <div class="info-row"><span class="info-label">Name</span><span class="info-value">{{ agent.name }}</span></div>
+                <div class="info-row"><span class="info-label">Callsign</span><span class="info-value">{{ agent.callsign|default:"—" }}</span></div>
+                <div class="info-row"><span class="info-label">Species</span><span class="info-value">{{ agent.species|default:"—" }}</span></div>
+                <div class="info-row"><span class="info-label">Career</span><span class="info-value">{{ agent.career|default:"—" }}</span></div>
+                <div class="info-row"><span class="info-label">Specializations</span><span class="info-value">{{ agent.specializations|default:"—" }}</span></div>
+                <div class="info-row"><span class="info-label">Age</span><span class="info-value">{{ agent.age|default:"—" }}</span></div>
+                <div class="info-row"><span class="info-label">Height / Weight</span><span class="info-value">{{ agent.height|default:"—" }} / {{ agent.weight|default:"—" }}</span></div>
+            </div>
+            {% if agent.background %}
+            <div class="info-section">
+                <h3>Background</h3>
+                <p>{{ agent.background }}</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="detail-card characteristics">
+            <h2>CHARACTERISTICS</h2>
+            <div class="char-grid">
+                <div class="char-item"><span class="char-name">BRAWN</span><span class="char-value">{{ agent.brawn }}</span></div>
+                <div class="char-item"><span class="char-name">AGILITY</span><span class="char-value">{{ agent.agility }}</span></div>
+                <div class="char-item"><span class="char-name">INTELLECT</span><span class="char-value">{{ agent.intellect }}</span></div>
+                <div class="char-item"><span class="char-name">CUNNING</span><span class="char-value">{{ agent.cunning }}</span></div>
+                <div class="char-item"><span class="char-name">WILLPOWER</span><span class="char-value">{{ agent.willpower }}</span></div>
+                <div class="char-item"><span class="char-name">PRESENCE</span><span class="char-value">{{ agent.presence }}</span></div>
+            </div>
+        </div>
+
+        <div class="detail-card derived-stats">
+            <h2>DERIVED STATISTICS</h2>
+            <div class="derived-grid">
+                <div class="derived-item">
+                    <span class="derived-label">Wound Threshold</span>
+                    <div class="derived-bar"><span class="bar-fill" style="width: {{ agent.current_wounds|default:0 }}%">{{ agent.current_wounds }} / {{ agent.wound_threshold }}</span></div>
+                </div>
+                <div class="derived-item">
+                    <span class="derived-label">Strain Threshold</span>
+                    <div class="derived-bar"><span class="bar-fill strain" style="width: {{ agent.current_strain|default:0 }}%">{{ agent.current_strain }} / {{ agent.strain_threshold }}</span></div>
+                </div>
+                <div class="derived-item">
+                    <span class="derived-label">Soak</span>
+                    <span class="derived-value">{{ agent.soak_value }}</span>
+                </div>
+                <div class="derived-item">
+                    <span class="derived-label">Defense (Ranged/Melee)</span>
+                    <span class="derived-value">{{ agent.defense_ranged }} / {{ agent.defense_melee }}</span>
+                </div>
+                <div class="derived-item">
+                    <span class="derived-label">Experience</span>
+                    <span class="derived-value">{{ agent.experience_available }} avail / {{ agent.experience_total }} total</span>
+                </div>
+                <div class="derived-item">
+                    <span class="derived-label">Credits</span>
+                    <span class="derived-value">{{ agent.credits }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-card skills-section">
+            <h2>SKILLS</h2>
+            <table class="data-table compact">
+                <thead>
+                    <tr><th>Skill</th><th>Characteristic</th><th>Rank</th><th>Career</th></tr>
+                </thead>
+                <tbody>
+                    {% for ps in agent.skills.all %}
+                    <tr>
+                        <td>{{ ps.skill.name }}</td>
+                        <td>{{ ps.skill.get_characteristic_display }}</td>
+                        <td>{{ ps.rank }}</td>
+                        <td>{% if ps.is_career %}✓{% else %}—{% endif %}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="4" class="empty">No skills recorded.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="detail-grid">
+        <div class="detail-card">
+            <h2>EQUIPMENT</h2>
+            <h3>Weapons</h3>
+            <table class="data-table compact">
+                <thead><tr><th>Name</th><th>Damage</th><th>Crit</th><th>Range</th></tr></thead>
+                <tbody>
+                    {% for w in agent.weapons.all %}
+                    <tr><td>{{ w.name }}</td><td>{{ w.damage }}</td><td>{{ w.crit }}</td><td>{{ w.range }}</td></tr>
+                    {% empty %}
+                    <tr><td colspan="4" class="empty">No weapons assigned.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <h3>Armor</h3>
+            <table class="data-table compact">
+                <thead><tr><th>Name</th><th>Soak</th><th>Defense</th></tr></thead>
+                <tbody>
+                    {% for a in agent.armor.all %}
+                    <tr><td>{{ a.name }}</td><td>{{ a.soak }}</td><td>{{ a.defense }}</td></tr>
+                    {% empty %}
+                    <tr><td colspan="3" class="empty">No armor assigned.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <h3>Gear</h3>
+            <ul class="gear-list">
+                {% for g in agent.gear.all %}
+                <li>{{ g.name }}</li>
+                {% empty %}
+                <li class="empty">No gear recorded.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="detail-card">
+            <h2>TALENTS & MOTIVATIONS</h2>
+            <h3>Talents</h3>
+            <ul class="talent-list">
+                {% for t in agent.talents.all %}
+                <li><strong>{{ t.name }}</strong> (R{{ t.rank }}){% if t.activation %} — {{ t.activation }}{% endif %}</li>
+                {% empty %}
+                <li class="empty">No talents recorded.</li>
+                {% endfor %}
+            </ul>
+            {% if agent.motivation_type %}
+            <h3>Motivation</h3>
+            <p><strong>{{ agent.get_motivation_type_display }}:</strong> {{ agent.motivation_description }}</p>
+            {% endif %}
+            {% if agent.duty %}
+            <h3>Duty</h3>
+            <p>{{ agent.duty }}</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}COUNCIL KELERES - New Gear Request{% endblock %}
+{% block content %}
+<div class="page">
+    <div class="page-header">
+        <h1>GEAR REQUEST FORM</h1>
+        <span class="classification-banner restricted">RESTRICTED</span>
+    </div>
+    <div class="form-card">
+        <form method="post" class="standard-form">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                <small class="form-text">{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                <small class="form-error">{{ error }}</small>
+                {% endfor %}
+            </div>
+            {% endfor %}
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">SUBMIT REQUEST</button>
+                <a href="{% url 'gear_request_list' %}" class="btn btn-secondary">CANCEL</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

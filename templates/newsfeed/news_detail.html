@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}{{ article.headline }} - News{% endblock %}
+{% block content %}
+<div class="page">
+    <div class="page-header">
+        <h1>{{ article.headline }}</h1>
+        <span class="news-importance imp-{{ article.importance }}">{{ article.get_importance_display }}</span>
+    </div>
+
+    {% if article.subheadline %}
+    <div class="subheadline">{{ article.subheadline }}</div>
+    {% endif %}
+
+    <div class="detail-card">
+        <div class="article-meta-bar">
+            <span>Published: {{ article.published_at|date:"Y-m-d H:i" }}</span>
+            <span>By: {{ article.author_name|default:"Keleres Press Office" }}</span>
+        </div>
+        <div class="content-block article-content">
+            {{ article.body|linebreaks }}
+        </div>
+        {% if article.tags %}
+        <div class="article-tags">
+            <span>Tags: {{ article.tags }}</span>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

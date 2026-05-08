@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}{{ planet.name }} - Planet Profile{% endblock %}
+{% block content %}
+<div class="page">
+    <div class="page-header">
+        <h1>PLANET: {{ planet.name|upper }}</h1>
+        <span class="classification-banner public">PUBLIC</span>
+    </div>
+
+    <div class="detail-grid">
+        <div class="detail-card">
+            <h2>PLANETARY DATA</h2>
+            <div class="info-grid">
+                <div class="info-row"><span class="info-label">Sector</span><span class="info-value">{{ planet.sector|default:"Unknown" }}</span></div>
+                <div class="info-row"><span class="info-label">Climate</span><span class="info-value">{{ planet.get_climate_display }}</span></div>
+                <div class="info-row"><span class="info-label">Resources</span><span class="info-value">{{ planet.get_resources_display }}</span></div>
+                <div class="info-row"><span class="info-label">Population</span><span class="info-value">{{ planet.population|default:"Unknown" }}</span></div>
+                <div class="info-row"><span class="info-label">Controlling Faction</span><span class="info-value">{{ planet.controlling_faction|default:"Unclaimed / Independent" }}</span></div>
+                <div class="info-row"><span class="info-label">Coordinates</span><span class="info-value">({{ planet.x_coord }}, {{ planet.y_coord }})</span></div>
+            </div>
+            <div class="info-section">
+                <h3>Description</h3>
+                <p>{{ planet.description|linebreaks|default:"No description available." }}</p>
+            </div>
+            {% if planet.points_of_interest %}
+            <div class="info-section">
+                <h3>Points of Interest</h3>
+                <p>{{ planet.points_of_interest|linebreaks }}</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="detail-card">
+            <h2>QUICK FACTS</h2>
+            <div class="quick-facts">
+                {% if planet.controlling_faction %}
+                <div class="fact">
+                    <span>Controlled by <strong>{{ planet.controlling_faction }}</strong></span>
+                    {% with rel=planet.controlling_faction.relation %}
+                        {% if rel %}
+                        <span class="relation-level level-{{ rel.level }}">Keleres: {{ rel.get_level_display }}</span>
+                        {% endif %}
+                    {% endwith %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

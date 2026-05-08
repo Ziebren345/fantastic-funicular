@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}COUNCIL KELERES - Galactic News Feed{% endblock %}
+{% block content %}
+<div class="page">
+    <div class="page-header">
+        <h1>GALACTIC NEWS FEED</h1>
+        {% if user.profile.is_gm %}
+        <a href="{% url 'admin:newsfeed_newsarticle_add' %}" class="btn btn-primary">+ PUBLISH NEWS</a>
+        {% endif %}
+    </div>
+
+    <div class="news-feed">
+        {% for article in articles %}
+        <article class="news-article">
+            <div class="news-header">
+                <span class="news-importance imp-{{ article.importance }}">{{ article.get_importance_display }}</span>
+                <span class="news-date">{{ article.published_at|date:"Y-m-d H:i" }}</span>
+            </div>
+            <h2><a href="{% url 'news_detail' article.pk %}">{{ article.headline }}</a></h2>
+            {% if article.subheadline %}
+            <p class="news-sub">{{ article.subheadline }}</p>
+            {% endif %}
+            <div class="news-footer">
+                <span>By {{ article.author_name|default:"Keleres Press Office" }}</span>
+                {% if article.tags %}
+                <span class="news-tags">{{ article.tags }}</span>
+                {% endif %}
+            </div>
+        </article>
+        {% empty %}
+        <div class="empty-state">No news articles published.</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
